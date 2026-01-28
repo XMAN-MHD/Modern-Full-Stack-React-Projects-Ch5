@@ -1,15 +1,24 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Post } from './components/Post'
 import CreatePost from './components/CreatePost'
 import PostFilter from './components/PostFilter'
 import PostSorting from './components/PostSorting'
 import { PostList } from './components/PostList'
 import { getPosts } from './api/posts'
+import { useDebounce } from './hooks/useDebounce'
 
 export function Blog() {
+  // **** States
+  const [author, setAuthor] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState('descending')
+
+  // **** Debounce the filter value
+  const debouncedAuthor = useDebounce(author) 
+
   const postsQuery = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts(),
+    queryKey: ['posts', { author: debouncedAuthor, sortBy, sortOrder }],
+    queryFn: () => getPosts({ author: debouncedAuthor, sortBy, sortOrder }),
   })
 
   // Get the posts from the backend api using Tanstack
@@ -27,9 +36,15 @@ export function Blog() {
       <br />
       <hr />
       Filter by:
-      <PostFilter field='author' />
+      <PostFilter field="author" value={author} onChange={setAuthor} />
       <br />
-      <PostSorting fields={['createdAt', 'updatedAt']} />
+      <PostSorting 
+        fields={['createdAt', 'updatedAt']}
+        value={sortBy}
+        onChange={(value) => setSortBy(value)}
+        orderValue={sortOrder}
+        onOrderChange={(orderValue) => setSortOrder(orderValue)} 
+      />
       <hr />
       <PostList posts={posts} />
     </div>

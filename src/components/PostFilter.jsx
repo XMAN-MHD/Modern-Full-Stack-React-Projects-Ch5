@@ -1,7 +1,6 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 
-export default function PostFilter({ field }) {
+export default function PostFilter({ field, value, onChange }) {
   return (
     <div>
       <label htmlFor={`filter-${field}`}>{field}: </label>
@@ -9,6 +8,8 @@ export default function PostFilter({ field }) {
         type='text'
         name={`filter-${field}`}
         id={`filter-${field}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   )
@@ -16,4 +17,6 @@ export default function PostFilter({ field }) {
 
 PostFilter.propTypes = {
   field: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
 }
