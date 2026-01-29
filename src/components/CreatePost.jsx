@@ -4,17 +4,28 @@ import { createPost } from '../api/posts.js'
 
 export default function CreatePost() {
   const [title, setTitle] = useState('')
+  const [tags, setTags] = useState('')
   const [author, setAuthor] = useState('')
   const [contents, setContents] = useState('')
 
   const queryClient = useQueryClient()
   const createPostMutation = useMutation({
-    mutationFn: () => createPost({ title, author, contents }),
+    mutationFn: () =>
+      createPost({
+        title,
+        author,
+        contents,
+        tags: tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+      }),
     onSuccess: () => {
-      setTitle('');
-      setAuthor('');
-      setContents('');
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      setTitle('')
+      setAuthor('')
+      setContents('')
+      setTags('')
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
     },
   })
 
@@ -44,6 +55,18 @@ export default function CreatePost() {
           id='create-author'
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
+        />
+      </div>
+      <br />
+      <div>
+        <label htmlFor='create-tags'>Tags: </label>
+        <input
+          type='text'
+          name='create-tags'
+          id='create-tags'
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          placeholder='e.g. react, nodejs, blog'
         />
       </div>
       <br />

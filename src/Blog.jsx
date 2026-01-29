@@ -10,6 +10,7 @@ import { useDebounce } from './hooks/useDebounce'
 export function Blog() {
   // **** States
   const [author, setAuthor] = useState('')
+  const [tags, setTags] = useState('')
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('descending')
 
@@ -17,8 +18,8 @@ export function Blog() {
   const debouncedAuthor = useDebounce(author) 
 
   const postsQuery = useQuery({
-    queryKey: ['posts', { author: debouncedAuthor, sortBy, sortOrder }],
-    queryFn: () => getPosts({ author: debouncedAuthor, sortBy, sortOrder }),
+    queryKey: ['posts', { author: debouncedAuthor,tags, sortBy, sortOrder }],
+    queryFn: () => getPosts({ author: debouncedAuthor,tags, sortBy, sortOrder }),
   })
 
   // Get the posts from the backend api using Tanstack
@@ -34,18 +35,28 @@ export function Blog() {
     <div style={{ padding: 8 }}>
       <CreatePost />
       <br />
-      <hr />
-      Filter by:
-      <PostFilter field="author" value={author} onChange={setAuthor} />
       <br />
-      <PostSorting 
+      <hr />
+      <br />
+      <br />
+      Filter by:
+      <br />
+      <br />
+      <PostFilter field='author' value={author} onChange={setAuthor} />
+      <br />
+      <PostFilter field='tags' value={tags} onChange={setTags} />
+      <br />
+      <PostSorting
         fields={['createdAt', 'updatedAt']}
         value={sortBy}
         onChange={(value) => setSortBy(value)}
         orderValue={sortOrder}
-        onOrderChange={(orderValue) => setSortOrder(orderValue)} 
+        onOrderChange={(orderValue) => setSortOrder(orderValue)}
       />
+      <br />
+      <br />
       <hr />
+      <br />
       <PostList posts={posts} />
     </div>
   )

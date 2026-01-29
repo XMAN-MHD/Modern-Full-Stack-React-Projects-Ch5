@@ -27,8 +27,8 @@ export async function listPostsByAuthor(author, options) {
 }
 
 // List posts by tags
-export async function listPostsByTag(tags, options) {
-  return await listPosts({ tags }, options)
+export async function listPostsByTags(tags, options) {
+  return await listPosts({ tags: { $in: tags.split(',') } }, options)
 }
 
 // THE GET SINGLE POST

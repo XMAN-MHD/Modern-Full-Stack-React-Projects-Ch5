@@ -1,7 +1,7 @@
 import {
   listAllPosts,
   listPostsByAuthor,
-  listPostsByTag,
+  listPostsByTags,
   getPostById,
   createPost,
   updatePost,
@@ -12,17 +12,17 @@ export function postsRoutes(app) {
 
   // READ
   app.get('/api/v1/posts', async (req, res) => {
-    const { sortBy, sortOrder, author, tag } = req.query
+    const { sortBy, sortOrder, author, tags } = req.query
     const options = { sortBy, sortOrder }
     try {
-      if (author && tag) {
+      if (author && tags) {
         return res
           .status(400)
-          .json({ error: 'query by either author or tag, not both' })
+          .json({ error: 'query by either author or tags, not both' })
       } else if (author) {
         return res.status(200).json(await listPostsByAuthor(author, options))
-      } else if (tag) {
-        return res.status(200).json(await listPostsByTag(tag, options))
+      } else if (tags) {
+        return res.status(200).json(await listPostsByTags(tags, options))
       } else {
         return res.status(200).json(await listAllPosts(options))
       }
