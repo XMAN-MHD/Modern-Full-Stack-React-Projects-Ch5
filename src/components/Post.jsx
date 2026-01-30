@@ -1,7 +1,21 @@
+import { useState } from 'react'
+import DeletePost from './DeletePost'
+import { EditPost } from './EditPost'
 import PropTypes from 'prop-types'
 
-export function Post({ title, contents, author, tags }) {
-  console.log('Rendering Post Tags:', tags)
+export function Post({ _id, title, contents, author, tags }) {
+  const [isEditing, setIsEditing] = useState(false)
+
+
+  if (isEditing) {
+    return (
+      <EditPost
+        post={{ _id, title, contents, author, tags }}
+        onClose={() => setIsEditing(false)}
+      />
+    )
+  }
+
   return (
     <article>
       <h3>{title}</h3>
@@ -9,14 +23,13 @@ export function Post({ title, contents, author, tags }) {
       <br />
       {author && (
         <em>
-          <br />
           Written by <strong>{author}</strong>
         </em>
       )}
       <br />
+      <br />
       {Array.isArray(tags) && tags.length > 0 && (
         <em>
-          <br />
           Tags:{' '}
           {tags.map((tag) => (
             <em
@@ -36,12 +49,22 @@ export function Post({ title, contents, author, tags }) {
         </em>
       )}
       <br />
+      <button
+        onClick={() => setIsEditing(true)}
+        style={{ color: 'white', background: 'blue', marginTop: 8 }}
+      >
+        Edit
+      </button>
+      &nbsp;
+      <DeletePost postId={_id} />
+      <br />
       <br />
     </article>
   )
 }
 
 Post.propTypes = {
+  _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   contents: PropTypes.string,
   author: PropTypes.string,
