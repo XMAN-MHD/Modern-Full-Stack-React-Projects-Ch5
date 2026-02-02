@@ -7,38 +7,44 @@ import { PostList } from './components/PostList'
 import { getPosts } from './api/posts'
 import { useDebounce } from './hooks/useDebounce'
 
+// Composant principal du blog : gère les filtres, le tri, la création et l'affichage des posts
 export function Blog() {
-  // **** States
+  // États pour les filtres et le tri
   const [author, setAuthor] = useState('')
   const [tags, setTags] = useState('')
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('descending')
 
-  // **** Debounce the filter value
-  const debouncedAuthor = useDebounce(author) 
+  // Utilisation du hook de debounce pour éviter trop de requêtes lors de la saisie du filtre auteur
+  const debouncedAuthor = useDebounce(author)
 
+  // Récupération des posts depuis le backend avec TanStack Query
   const postsQuery = useQuery({
-    queryKey: ['posts', { author: debouncedAuthor,tags, sortBy, sortOrder }],
-    queryFn: () => getPosts({ author: debouncedAuthor,tags, sortBy, sortOrder }),
+    // La clé de la query inclut tous les paramètres pour permettre le caching et l'invalidation correcte
+    queryKey: ['posts', { author: debouncedAuthor, tags, sortBy, sortOrder }],
+    // Fonction qui effectue la requête API avec les bons paramètres
+    queryFn: () =>
+      getPosts({ author: debouncedAuthor, tags, sortBy, sortOrder }),
   })
 
-  // Get the posts from the backend api using Tanstack
+  // On récupère les posts ou un tableau vide si la data n'est pas encore chargée
   const posts = postsQuery.data ?? []
 
-  // Handle errors from the Tanstack postQuery
+  // Gestion des états de chargement et d'erreur
   if (postsQuery.isLoading) return <div>Loading...</div>
   if (postsQuery.error) return <div>Error: {postsQuery.error.message}</div>
 
-  console.log(postsQuery)
-
+  // Affichage du composant principal
   return (
     <div style={{ padding: 8 }}>
+      {/* Formulaire de création de post */}
       <CreatePost />
       <br />
       <br />
       <hr />
       <br />
       <br />
+      {/* Filtres */}
       Filter by:
       <br />
       <br />
@@ -46,6 +52,7 @@ export function Blog() {
       <br />
       <PostFilter field='tags' value={tags} onChange={setTags} />
       <br />
+      {/* Tri */}
       <PostSorting
         fields={['createdAt', 'updatedAt']}
         value={sortBy}
@@ -57,6 +64,7 @@ export function Blog() {
       <br />
       <hr />
       <br />
+      {/* Liste des posts */}
       <PostList posts={posts} />
     </div>
   )
