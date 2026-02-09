@@ -1,0 +1,17 @@
+# 1. Utilise l'image officielle Node.js version 20 comme base
+FROM node:20
+
+# 2. Définit le dossier de travail dans le container
+WORKDIR /app
+
+# 3. Copie les fichiers de dépendances (pour optimiser le cache Docker)
+COPY package.json package-lock.json ./
+
+# 4. Installe les dépendances dans l'image
+RUN npm install
+
+# 5. Copie tout le reste du code dans l'image (src, config, etc.)
+COPY . .
+
+# 6. Commande à exécuter quand le container démarre
+CMD ["npm", "start"]
