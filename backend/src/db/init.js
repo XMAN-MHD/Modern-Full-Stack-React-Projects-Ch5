@@ -1,11 +1,17 @@
 import mongoose from 'mongoose'
 
-export function initDatabase() {
+export async function initDatabase() {
   const DATABASE_URL =
     process.env.DATABASE_URL || 'mongodb://localhost:27018/blog'
-  mongoose.connection.on('open', () => {
-    console.info('successfully connected to database:', DATABASE_URL)
-  })
-  const connection = mongoose.connect(DATABASE_URL)
-  return connection
+
+  try {
+    await mongoose.connect(DATABASE_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    console.info('✅ Successfully connected to database:', DATABASE_URL)
+  } catch (err) {
+    console.error('❌ Error connecting to database:', err)
+    throw err
+  }
 }
