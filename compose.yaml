@@ -5,16 +5,16 @@ services:
     build: ./backend
     container_name: blog-backend
     environment:
-      - PORT=3001
-      - DATABASE_URL=mongodb+srv://2MD:Atlas2md93@cluster0.lwup07w.mongodb.net/blog?retryWrites=true&w=majority
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
     ports:
-      - "3001:3001"
+      - "${PORT}:${PORT}"
 
   blog-frontend:
     build:
       context: .
       args:
-        VITE_BACKEND_URL: http://localhost:3001/api/v1
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     container_name: blog-frontend
     ports:
       - "3000:80"
